@@ -1,3 +1,24 @@
+#conexão com o sqlite3
+import sqlite3
+
+#função para conectar ao banco de dados
+def conectar_banco():
+    conn = sqlite3.connect('barbearia.db')
+    cursor = conexao.cursor()
+
+    #cria a tabela de funcionários no banco de dados
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS funcionarios (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nome TEXT NOT NULL,
+            especialidade TEXT NOT NULL,
+            comissao REAL NOT NULL
+        )
+    ''')
+    conexao.commit()
+    conexao.close()
+
+
 profissionais = {}
 contador_id = 1
 
