@@ -1,6 +1,7 @@
 """
 agendamentos
 """
+agendamentos = []
 
 #serviços disponíveis
 servicos = {
