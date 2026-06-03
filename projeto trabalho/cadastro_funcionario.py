@@ -3,7 +3,7 @@ import sqlite3
 
 #função para conectar ao banco de dados
 def conectar_banco():
-    conn = sqlite3.connect('barbearia.db')
+    conexao = sqlite3.connect('barbearia.db')
     cursor = conexao.cursor()
 
     #cria a tabela de funcionários no banco de dados
