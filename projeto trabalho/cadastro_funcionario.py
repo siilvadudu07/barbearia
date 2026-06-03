@@ -80,5 +80,3 @@ def excluir_funcionario():
 funcionarios()
 visualizar_funcionarios()
 excluir_funcionario()
-
-#vasco campeao mundial
