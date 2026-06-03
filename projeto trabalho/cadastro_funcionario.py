@@ -63,11 +63,14 @@ def visualizar_funcionarios():
 #excluir funcionário
 def excluir_funcionario():
     
-    id_excluir = int(input("Digite o ID do funcionário que deseja excluir: "))
+    id_excluir = int(input("Digite o ID do funcionário que deseja excluir(0 para sair): "))
     
     if id_excluir in profissionais:
         del profissionais[id_excluir]
         print("Funcionário excluído com sucesso!")
+    elif id_excluir == 0:
+        print("Todos os funcionários cadastrados!")
+        print(visualizar_funcionarios)
     else:
         print("ID de funcionário não encontrado.")
     
