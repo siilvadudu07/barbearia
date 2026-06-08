@@ -77,6 +77,3 @@ def excluir_funcionario():
     print("\n FUNCIONÁRIOS ATUALIZADOS")
     visualizar_funcionarios()
 
-funcionarios()
-visualizar_funcionarios()
-excluir_funcionario()
