@@ -40,7 +40,7 @@ def menuprincipal():
             print("Obrigadp por usar o sistema da barbearia! Até a próxima!")
             break  # Encerra o looping e fecha o programa
         else:
-            print("Opção inválida! Digite um número de 0 a 7, PELO AMOR DE DEUS!")
+            print("Opção inválida! Digite um número de 0 a 7")
 
 
 menuprincipal()
