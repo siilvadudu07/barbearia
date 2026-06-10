@@ -18,7 +18,7 @@ def menuprimeiro():
     if funcao == 1:
         menucliente()
     elif funcao == 2:
-        mostrar_menubarbeiro()
+        menubarbeiro()
     else:
         print("Opção inválida! Digite 1 para cliente ou 2 para barbeiro.")
 
@@ -53,7 +53,7 @@ def menucliente():
         print("Opção inválida! Digite um número de 0 a 4")
 
 def mostrar_menubarbeiro():
-    print("\nMenu Principal")
+    print("Menu Principal")
     print("1. Cadastrar Funcionário")
     print("2. Visualizar Funcionários")
     print("3. Excluir Funcionário")
@@ -67,26 +67,36 @@ def menubarbeiro():
     while True:
         mostrar_menubarbeiro()
         opcao = int(input("Qual ação você deseja realizar? (Digite o número): "))
+
         if opcao == 1:
-            funcionarios() 
+            funcionarios()
+            retorno()
         elif opcao == 2:
             visualizar_funcionarios()
+            retorno()
         elif opcao == 3:
             excluir_funcionario()
+            retorno()
         elif opcao == 4:
             mostrar_horarios()
+            retorno()
         elif opcao == 5:
             mostrar_servicos()
+            retorno()
         elif opcao == 6:
             listar_agendamentos()
+            retorno()
         elif opcao == 7:
             remover_agendamento()
+            if len(listar_agendamentos()) == 0:
+                print("Nenhum agendamento encontrado.")
+                return menubarbeiro()
         elif opcao == 0:
             print("Obrigadp por usar o sistema da barbearia! Até a próxima!")
+            retorno()
             break  # Encerra o looping e fecha o programa
         else:
             print("Opção inválida! Digite um número de 0 a 7")
-
 
 #começo
 menuprimeiro()
