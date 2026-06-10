@@ -22,11 +22,40 @@ def conectar_banco():
 profissionais = {}
 contador_id = 1
 
+def servicosparacadastrar():
+    print("Serviços disponíveis para cadastro:")
+    print("1. Corte de Cabelo")
+    print("2. Corte só a lateral")
+    print("3. Barba")
+    print("4. Corte + Barba")
+    print("5. Corte Infantil")
+    print("6. Pintura")
+    print("7. Sobrancelha")
+
+
 #funcionário
 def funcionarios():
     while True:
         nome = input("Digite o nome do funcionário: ")
-        especialidade = input("Digite a especialidade do funcionário: ")
+        servicosparacadastrar()
+        especialidade = int(input("Digite o número da especialidade do funcionário: "))
+        if especialidade == 1:
+            especialidade = "Corte de Cabelo"
+        elif especialidade == 2:
+            especialidade = "Corte só a lateral"
+        elif especialidade == 3:
+            especialidade = "Barba"
+        elif especialidade == 4:
+            especialidade = "Corte + Barba"
+        elif especialidade == 5:
+            especialidade = "Corte Infantil"
+        elif especialidade == 6:
+            especialidade = "Pintura"
+        elif especialidade == 7:
+            especialidade = "Sobrancelha"
+        else:
+            print("Especialidade inválida. Tente novamente.")
+            continue
         comissao = float(input("Digite a comissão do funcionário (em %): "))
 
         conexao = sqlite3.connect('barbearia.db')
