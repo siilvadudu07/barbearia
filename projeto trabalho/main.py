@@ -1,9 +1,10 @@
 """
 main - integração
 """
-from cadastro_funcionario import funcionarios, visualizar_funcionarios, excluir_funcionario
-
+from cadastro_funcionario import conectar_banco, funcionarios, visualizar_funcionarios, excluir_funcionario
 from agendamento import mostrar_horarios, mostrar_servicos, listar_agendamentos, remover_agendamento, agendar_servico
+
+conectar_banco()
 
 def retorno():
     print("Digite 0 para voltar ao menu principal")
@@ -18,7 +19,7 @@ def menuprimeiro():
     if funcao == 1:
         menucliente()
     elif funcao == 2:
-        mostrar_menubarbeiro()
+        menubarbeiro()
     else:
         print("Opção inválida! Digite 1 para cliente ou 2 para barbeiro.")
 
@@ -89,4 +90,5 @@ def menubarbeiro():
 
 
 #começo
+conectar_banco()
 menuprimeiro()
