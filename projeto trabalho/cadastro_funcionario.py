@@ -24,56 +24,55 @@ contador_id = 1
 
 #funcionário
 def funcionarios():
-    global contador_id
     while True:
-        # Solicitar informações do funcionário
-        print("\n CADASTRO DE FUNCIONÁRIOS")
         nome = input("Digite o nome do funcionário: ")
         especialidade = input("Digite a especialidade do funcionário: ")
-        comissao = float(input("Digite a comissão do funcionário: "))
-        profissionais[contador_id] = {"nome": nome, "especialidade": especialidade}
-        
-        #adiciona funcionario ao dicionário de profissionais
-        profissionais[contador_id] = {
-            "nome": nome,
-            "especialidade": especialidade,
-            "comissao": comissao
-            }
+        comissao = float(input("Digite a comissão do funcionário (em %): "))
+
+        conexao = sqlite3.connect('barbearia.db')
+        cursor = conexao.cursor()
+
+        cursor.execute("""
+                    INSERT INTO funcionarios (nome, especialidade, comissao)
+                        VALUES (?, ?, ?)
+                    """, (nome, especialidade, comissao))
+        conexao.commit()
+        conexao.close()
 
         print("Funcionário cadastrado com sucesso!")
-        contador_id += 1
 
-        #perguntar se deseja cadastrar outro funcionário
-        continuar = input("Deseja cadastrar outro funcionário? (sim/nao): ")
-        continuar = continuar.lower()
-        if continuar != "sim":
+        continuar = input("Deseja cadastrar outro funcionário? (sim/não): ").lower
+        if continuar != 'sim':
             break
 
 #visualizar funcionários
 def visualizar_funcionarios():
-    
-    if not profissionais:
-        print("Nenhum funcionário cadastrado.")
+    conexao = sqlite3.connect('barbearia.db')
+    cursor = conexao.cursor()
+
+    cursor.execute("SELECT * FROM funcionarios")
+    funcionarios = cursor.fetchall()
+
+    if funcionarios:
+        print("\nFuncionários Cadastrados:")
+        for funcionario in funcionarios:
+            print(f"ID: {funcionario[0]}, Nome: {funcionario[1]}, Especialidade: {funcionario[2]}, Comissão: {funcionario[3]}%")
     else:
-        print("\n FUNCIONÁRIOS CADASTRADOS")
-        
-        for id, info in profissionais.items():
-            print(f"ID: {id}, Nome: {info['nome']}, Especialidade: {info['especialidade']}, Comissão: {info['comissao']}%")
+        print("Nenhum funcionário cadastrado.")
+
+    conexao.close()
+
 
 #excluir funcionário
 def excluir_funcionario():
-    
-    id_excluir = int(input("Digite o ID do funcionário que deseja excluir(0 para sair): "))
-    
-    if id_excluir in profissionais:
-        del profissionais[id_excluir]
-        print("Funcionário excluído com sucesso!")
-    elif id_excluir == 0:
-        print("Todos os funcionários cadastrados!")
-        print(visualizar_funcionarios)
-    else:
-        print("ID de funcionário não encontrado.")
-    
-    print("\n FUNCIONÁRIOS ATUALIZADOS")
-    visualizar_funcionarios()
+    id_excluir = int(input("Digite o ID do funcionário que deseja excluir: "))
 
+    conexao = sqlite3.connect('barbearia.db')
+    cursor = conexao.cursor()
+
+    cursor.execute("DELETE FROM funcionarios WHERE id = ?", (id_excluir,))
+
+    conexao.commit()
+    conexao.close()
+
+    print("Funcionário excluído com sucesso!")
