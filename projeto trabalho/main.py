@@ -1,7 +1,7 @@
 """
 main - integração
 """
-from cadastro_funcionario import conectar_banco, funcionarios, visualizar_funcionarios, excluir_funcionario
+from cadastro_funcionario import calcular_comissao, conectar_banco, funcionarios, visualizar_funcionarios, excluir_funcionario
 from agendamento import mostrar_horarios, mostrar_servicos, listar_agendamentos, remover_agendamento, agendar_servico
 
 conectar_banco()
@@ -62,6 +62,7 @@ def mostrar_menubarbeiro():
     print("5. Mostrar Serviços Disponíveis")
     print("6. Listar Agendamentos")
     print("7. Remover Agendamento")
+    print("8. Calcular Comissão")
     print("0. Retornar ao Menu Principal")
 
 def menubarbeiro():
@@ -92,6 +93,9 @@ def menubarbeiro():
             if len(listar_agendamentos()) == 0:
                 print("Nenhum agendamento encontrado.")
                 return menubarbeiro()
+        elif opcao == 8:
+            calcular_comissao()
+            retorno()
         elif opcao == 0:
             print("Obrigadp por usar o sistema da barbearia! Até a próxima!")
             retorno()

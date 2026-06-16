@@ -105,3 +105,25 @@ def excluir_funcionario():
     conexao.close()
 
     print("Funcionário excluído com sucesso!")
+
+def calcular_comissao():
+    visualizar_funcionarios()
+    try: 
+        id_funcionario = int(input("Digite o ID do funcionário que realizou o serviço: "))
+        conexao = sqlite3.connect('barbearia.db')
+        cursor = conexao.cursor()
+        cursor.execute("SELECT nome, especialidade, comissao FROM funcionarios WHERE id = ?", (id_funcionario,))
+        funcionario = cursor.fetchone()
+        conexao.close()
+        if funcionario:
+            nome = funcionario[0]
+            especialidade = funcionario[1]
+            comissao_funcionario = funcionario[2]
+            print(f"Funcionário: {nome}, Especialidade: {especialidade}, Comissão: {comissao_funcionario}%")
+            valor_servico = int(input("Digite o valor do serviço realizado: "))
+            calculo_comissao = valor_servico * (comissao_funcionario / 100)
+            print(f"A comissão do funcionário é: R${calculo_comissao:.2f}")
+        else:
+            print("Funcionário não encontrado.")
+    except ValueError:
+        print("ID inválido. Por favor, digite um número inteiro.")
