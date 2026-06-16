@@ -14,6 +14,8 @@ servicos = {
     7: {"nome": "Sobrancelha", "preco": 10.0}
 }
 
+#ajeitar o banco de dados para incluir os serviços e os horários disponíveis, para que o barbeiro possa escolher quais serviços ele oferece e quais horários ele tem disponível para agendamento. Assim, quando o cliente for agendar um serviço, ele poderá escolher entre os serviços e horários disponíveis do barbeiro específico. 
+
 #horários disponíveis
 horarios = {
     1: "09:00",

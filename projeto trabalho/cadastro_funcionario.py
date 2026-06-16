@@ -1,6 +1,8 @@
 #conexão com o sqlite3
 import sqlite3
 
+from agendamento import servicos, horarios, agendamentos
+
 #função para conectar ao banco de dados
 def conectar_banco():
     conexao = sqlite3.connect('barbearia.db')
@@ -74,6 +76,44 @@ def funcionarios():
         if continuar != 'sim':
             break
 
+#criar banco de dados para armazenar as comissões semanais dos funcionários
+def banco_comissoes():
+    conexao = sqlite3.connect('comissoes.db')
+    cursor = conexao.cursor()
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS comissoes (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nome_funcionario TEXT NOT NULL,
+            valor_comissao REAL NOT NULL,
+            data TEXT NOT NULL
+        )
+    ''')
+
+    for agendamento in agendamentos:
+        nome_funcionario = agendamento['funcionario']
+        id_servico = agendamento['servico']
+        valor_servico = servicos[id_servico]['preco']
+        comissao_funcionario = 0.0
+
+        conexao_comissao = sqlite3.connect('barbearia.db')
+        cursor_comissao = conexao_comissao.cursor()
+        cursor_comissao.execute("SELECT comissao FROM funcionarios WHERE nome = ?", (nome_funcionario,))
+        resultado = cursor_comissao.fetchone()
+        if resultado:
+            comissao_funcionario = resultado[0]
+        conexao_comissao.close()
+
+        valor_comissao = valor_servico * (comissao_funcionario / 100)
+        data_agendamento = agendamento['data']
+
+        cursor.execute("""
+            INSERT INTO comissoes (nome_funcionario, valor_comissao, data)
+            VALUES (?, ?, ?)
+        """, (nome_funcionario, valor_comissao, data_agendamento))
+    conexao.commit()
+    conexao.close()
+
 #visualizar funcionários
 def visualizar_funcionarios():
     conexao = sqlite3.connect('barbearia.db')
@@ -94,6 +134,7 @@ def visualizar_funcionarios():
 
 #excluir funcionário
 def excluir_funcionario():
+    visualizar_funcionarios()
     id_excluir = int(input("Digite o ID do funcionário que deseja excluir: "))
 
     conexao = sqlite3.connect('barbearia.db')
@@ -120,9 +161,16 @@ def calcular_comissao():
             especialidade = funcionario[1]
             comissao_funcionario = funcionario[2]
             print(f"Funcionário: {nome}, Especialidade: {especialidade}, Comissão: {comissao_funcionario}%")
-            valor_servico = int(input("Digite o valor do serviço realizado: "))
-            calculo_comissao = valor_servico * (comissao_funcionario / 100)
-            print(f"A comissão do funcionário é: R${calculo_comissao:.2f}")
+            print("Serviços disponíveis:")
+            for id, servico in servicos.items():
+                print(f"{id}. {servico['nome']} - R${servico['preco']:.2f}")
+            id_servico = int(input("Digite o ID do serviço realizado: "))
+            if id_servico in servicos:
+                valor_servico = servicos[id_servico]['preco']
+                calculo_comissao = valor_servico * (comissao_funcionario / 100)
+                print(f"A comissão do funcionário é: R${calculo_comissao:.2f}")
+            else:
+                print("Serviço não encontrado.")
         else:
             print("Funcionário não encontrado.")
     except ValueError:
