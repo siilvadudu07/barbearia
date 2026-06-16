@@ -2,6 +2,7 @@
 agendamentos
 """
 agendamentos = []
+import sqlite3
 
 #serviços disponíveis
 servicos = {
@@ -76,9 +77,19 @@ def agendar_servico():
 
     # Verifica se o horário já foi reservado
     for agendamento in agendamentos:
-        if agendamento["horario"] == horarios[horario_id]:
-            print("Horário já reservado. Tente outro horário.")
+        if agendamento["horario"] == horario_escolhido and agendamento["barbeiro_id"] == id_barbeiro_escolhido:
+            print("\n[Erro] Este barbeiro já tem um agendamento nesse horário! Escolha outro profissional ou horário.")
             return
+    horario_escolhido = horarios[horario_id]
+    # Se passou na validação, salva o agendamento na memória
+    novo_agendamento = {
+        "servico": nome_servico_escolhido,
+        "preco": servicos[servico_id]["preco"],
+        "horario": horario_escolhido,
+        "barbeiro_id": id_barbeiro_escolhido
+    }
+    agendamentos.append(novo_agendamento)
+    print(f"\nAgendamento feito com sucesso para o horário das {horario_escolhido}!")
 
     # Mostra os barbeiros que podem fazer o serviço para o cliente escolher um
     print("\nBarbeiros disponíveis para este serviço:")
