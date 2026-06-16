@@ -1,8 +1,8 @@
 """
 main - integração
 """
-from cadastro_funcionario import banco_comissoes, calcular_comissao, conectar_banco, funcionarios, visualizar_funcionarios, excluir_funcionario, banco_comissoes
-from agendamento import mostrar_horarios, mostrar_servicos, listar_agendamentos, remover_agendamento, agendar_servico
+from cadastro_funcionario import banco_comissoes, calcular_comissao, conectar_banco, funcionarios, visualizar_funcionarios, excluir_funcionario, banco_comissoes, registrar_servico_banco
+from agendamento import mostrar_servicos, mostrar_horarios, agendar_servico, listar_agendamentos, remover_agendamento
 
 conectar_banco()
 
@@ -99,6 +99,9 @@ def menubarbeiro():
                 return menubarbeiro()
         elif opcao == 8:
             calcular_comissao()
+            id_func = int(input("Digite o ID do funcionário para calcular a comissão: "))
+            id_servico = int(input("Digite o ID do serviço realizado: "))
+            registrar_servico_banco(id_func, id_servico)
             retorno()
         elif opcao == 9:
             mostrar_comissao()

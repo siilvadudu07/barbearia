@@ -24,6 +24,37 @@ def conectar_banco():
 profissionais = {}
 contador_id = 1
 
+import datetime
+
+def registrar_servico_banco(id_funcionario, id_servico):
+    conexao = sqlite3.connect('barbearia.db')
+    cursor = conexao.cursor()
+    
+    # buscar o funcionário
+    cursor.execute("SELECT nome, comissao FROM funcionarios WHERE id = ?", (id_funcionario,))
+    funcionario = cursor.fetchone()
+    
+    if funcionario:
+        nome_func, comissao_porcentagem = funcionario
+        servico_nome = servicos[id_servico]['nome']
+        valor_servico = servicos[id_servico]['preco']
+        
+        # Calculo do valor que vai pro barbeiro
+        valor_comissao = valor_servico * (comissao_porcentagem / 100)
+        data_atual = datetime.date.today().strftime("%d/%m/%Y") #tranfsforma a data no formato dia/mes/ano
+        
+        # Insere no histórico
+        cursor.execute('''
+            INSERT INTO servicos_realizados (funcionario_id, servico_nome, valor_servico, valor_comissao, data_registro)
+            VALUES (?, ?, ?, ?, ?)
+        ''', (id_funcionario, servico_nome, valor_servico, valor_comissao, data_atual))
+        
+        conexao.commit()
+        print(f"Sucesso! R${valor_comissao:.2f} de comissão gerada para {nome_func}.")
+    else:
+        print("Funcionário não encontrado.")
+    conexao.close()
+
 def servicosparacadastrar():
     print("Serviços disponíveis para cadastro:")
     print("1. Corte de Cabelo")
