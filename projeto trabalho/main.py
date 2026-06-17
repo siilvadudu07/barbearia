@@ -1,10 +1,11 @@
 """
 main - integração
 """
-from cadastro_funcionario import exibir_comissoes_banco, calcular_comissao, conectar_banco, funcionarios, visualizar_funcionarios, excluir_funcionario, registrar_servico_banco
+from cadastro_funcionario import exibir_comissoes_banco, calcular_comissao, funcionarios, visualizar_funcionarios, excluir_funcionario, registrar_servico_banco
 from agendamento import mostrar_servicos, mostrar_horarios, agendar_servico, listar_agendamentos, remover_agendamento
+from banco import inicializar_banco
 
-conectar_banco()
+inicializar_banco()  # Verifica e inicializa o banco de dados
 
 def retorno():
     print("Digite 0 para voltar ao menu principal")
@@ -22,6 +23,7 @@ def menuprimeiro():
         menubarbeiro()
     else:
         print("Opção inválida! Digite 1 para cliente ou 2 para barbeiro.")
+        return menuprimeiro()
 
 def mostrar_menucliente():
     print("\nOlá cliente! Bem-vindo ao sistema de agendamento da barbearia.")
@@ -115,5 +117,4 @@ def menubarbeiro():
             print("Opção inválida! Digite um número de 0 a 9.")
 
 #começo
-conectar_banco()
 menuprimeiro()
