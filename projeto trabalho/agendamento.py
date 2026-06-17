@@ -65,7 +65,7 @@ def agendar_servico():
     conexao.close()
 
     if not barbeiros_disponiveis:
-        print(f"\n[Erro] Desculpe, não temos nenhum barbeiro disponível especializado em: {nome_servico_escolhido}.")
+        print(f"\nDesculpe, não temos nenhum barbeiro disponível especializado em: {nome_servico_escolhido}.")
         return
 
     # mostra os barbeiros que podem fazer o serviço para o cliente escolher ANTES do horário
@@ -98,7 +98,7 @@ def agendar_servico():
     conflito = cursor.fetchone()
 
     if conflito:
-        print("\n[Erro] Este barbeiro já tem um agendamento nesse horário! Escolha outro profissional ou horário.")
+        print("\nEste barbeiro já tem um agendamento nesse horário! Escolha outro profissional ou horário.")
         conexao.close()
         return
 
@@ -122,8 +122,8 @@ def listar_agendamentos():
     cursor.execute('''
         SELECT agendamentos.id, agendamentos.servico, agendamentos.horario, agendamentos.preco, funcionarios.nome 
         FROM agendamentos 
-        INNER JOIN funcionarios ON agendamentos.barbeiro_id = funcionarios.id
-    ''')
+        INNER JOIN funcionarios ON agendamentos.barbeiro_id = funcionarios.id 
+    ''') #inner join = combina os dados das duas tabelas para mostrar o nome do barbeiro junto com o agendamento
     todos_agendamentos = cursor.fetchall()
     conexao.close()
 
@@ -144,7 +144,7 @@ def remover_agendamento():
     if qtd == 0:
         return
 
-    id_remover = int(input("\nDigite o ID Ref do agendamento que deseja remover: "))
+    id_remover = int(input("\nDigite o ID Ref do agendamento que deseja remover(Enter para sair): "))
     
     conexao = sqlite3.connect('barbearia.db')
     cursor = conexao.cursor()

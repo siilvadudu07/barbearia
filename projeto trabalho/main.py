@@ -1,120 +1,130 @@
 """
 main - integração
 """
+from banco import inicializar_banco
 from cadastro_funcionario import exibir_comissoes_banco, calcular_comissao, funcionarios, visualizar_funcionarios, excluir_funcionario, registrar_servico_banco
 from agendamento import mostrar_servicos, mostrar_horarios, agendar_servico, listar_agendamentos, remover_agendamento
-from banco import inicializar_banco
 
-inicializar_banco()  # Verifica e inicializa o banco de dados
+# Inicia o banco de dados antes de tudo
+inicializar_banco()
 
-def retorno():
-    print("Digite 0 para voltar ao menu principal")
-    if input() == "0":
-        menuprimeiro()
+# Função para pausar a execução e esperar o usuário pressionar ENTER
+def pausa():
+    input("\nPressione ENTER para continuar...")
 
-def menuprimeiro():
-    print("Você é cliente ou barbeiro?")
-    print("1.Cliente")
-    print("2.Barbeiro")
-    funcao = int(input("Digite 1 ou 2: "))
-    if funcao == 1:
-        menucliente()
-    elif funcao == 2:
-        menubarbeiro()
-    else:
-        print("Opção inválida! Digite 1 para cliente ou 2 para barbeiro.")
-        return menuprimeiro()
-
+# --- MENUS DE CLIENTE ---
 def mostrar_menucliente():
-    print("\nOlá cliente! Bem-vindo ao sistema de agendamento da barbearia.")
+    print("\n--- ÁREA DO CLIENTE ---")
     print("1. Mostrar Horários Disponíveis")
     print("2. Mostrar Serviços Disponíveis")
     print("3. Listar Agendamentos")
     print("4. Agendar um Serviço")
     print("5. Remover Agendamento")
-    print("0. Retornar ao Menu Principal")
+    print("0. Voltar ao Menu Principal")
     
 def menucliente():
-    mostrar_menucliente()
-    opcao = int(input("Qual ação você deseja realizar? (Digite o número): "))
-    if opcao == 1:
-        mostrar_horarios()
-        retorno()
-        
-    elif opcao == 2:
-        mostrar_servicos()
-        retorno()
-    elif opcao == 3:
-        listar_agendamentos()
-        retorno()
-    elif opcao == 4:
-        agendar_servico()
-        retorno()
-    elif opcao == 5:
-        remover_agendamento()
-        retorno()
-    elif opcao == 0:
-        print("Obrigado por usar o sistema da barbearia! Até a próxima!")
-        retorno()
-    else:
-        print("Opção inválida! Digite um número de 0 a 5'")
+    while True:
+        mostrar_menucliente()
+        try:
+            opcao = int(input("Qual ação você deseja realizar? (Digite o número): "))
+
+            if opcao == 1:
+                mostrar_horarios()
+                pausa()
+            elif opcao == 2:
+                mostrar_servicos()
+                pausa()
+            elif opcao == 3:
+                listar_agendamentos()
+                pausa()
+            elif opcao == 4:
+                agendar_servico()
+                pausa()
+            elif opcao == 5:
+                remover_agendamento()
+                pausa()
+            elif opcao == 0:
+                break # Saíds do laço e volta pro menu principal
+            else:
+                print("Opção inválida! Tente novamente.")
+        except ValueError:
+            print("Erro: Digite apenas números.")
 
 def mostrar_menubarbeiro():
-    print("Menu Principal")
+    print("\n--- ÁREA DO BARBEIRO ---")
     print("1. Cadastrar Funcionário")
     print("2. Visualizar Funcionários")
     print("3. Excluir Funcionário")
-    print("4. Mostrar Horários Disponíveis")
-    print("5. Mostrar Serviços Disponíveis")
+    print("4. Mostrar Horários")
+    print("5. Mostrar Serviços")
     print("6. Listar Agendamentos")
     print("7. Remover Agendamento")
-    print("8. Calcular Comissão")
-    print("9. Mostrar Comissão")
-    print("0. Retornar ao Menu Principal")
-
-def mostrar_comissao():
-    exibir_comissoes_banco()
+    print("8. Calcular e Gravar Comissão")
+    print("9. Extrato de Comissões")
+    print("0. Voltar ao Menu Principal")
 
 def menubarbeiro():
     while True:
         mostrar_menubarbeiro()
-        opcao = int(input("Qual ação você deseja realizar? (Digite o número): "))
+        try:
+            opcao = int(input("Qual ação você deseja realizar? (Digite o número): "))
 
-        if opcao == 1:
-            funcionarios()
-            retorno()
-        elif opcao == 2:
-            visualizar_funcionarios()
-            retorno()
-        elif opcao == 3:
-            excluir_funcionario()
-            retorno()
-        elif opcao == 4:
-            mostrar_horarios()
-            retorno()
-        elif opcao == 5:
-            mostrar_servicos()
-            retorno()
-        elif opcao == 6:
-            listar_agendamentos()
-            retorno()
-        elif opcao == 7:
-            remover_agendamento()
-            if len(listar_agendamentos()) == 0:
-                print("Nenhum agendamento encontrado.")
-                return menubarbeiro()
-        elif opcao == 8:
-            calcular_comissao()
-            retorno()
-        elif opcao == 9:
-            mostrar_comissao()
-            retorno()
-        elif opcao == 0:
-            print("Obrigadp por usar o sistema da barbearia! Até a próxima!")
-            retorno()
-            break  # Encerra o looping e fecha o programa
-        else:
-            print("Opção inválida! Digite um número de 0 a 9.")
+            if opcao == 1:
+                funcionarios()
+                pausa()
+            elif opcao == 2:
+                visualizar_funcionarios()
+                pausa()
+            elif opcao == 3:
+                excluir_funcionario()
+                pausa()
+            elif opcao == 4:
+                mostrar_horarios()
+                pausa()
+            elif opcao == 5:
+                mostrar_servicos()
+                pausa()
+            elif opcao == 6:
+                listar_agendamentos()
+                pausa()
+            elif opcao == 7:
+                remover_agendamento()
+                pausa()
+            elif opcao == 8:
+                calcular_comissao()
+                pausa()
+            elif opcao == 9:
+                exibir_comissoes_banco()
+                pausa()
+            elif opcao == 0:
+                break # Saíds do laço e volta pro menu principal
+            else:
+                print("Opção inválida! Tente novamente.")
+        except ValueError:
+            print("Erro: Digite apenas números.")
 
-#começo
-menuprimeiro()
+def iniciar_sistema():
+    while True:
+        print("   SISTEMA DE GESTÃO - BARBEARIA")
+        print("-----------------------------------")
+        print("1. Entrar como Cliente")
+        print("2. Entrar como Barbeiro")
+        print("0. Encerrar o Sistema")
+        
+        try:
+            funcao = int(input("Digite 1, 2 ou 0: "))
+            
+            if funcao == 1:
+                menucliente()
+            elif funcao == 2:
+                menubarbeiro()
+            elif funcao == 0:
+                print("\nObrigado por usar o sistema da barbearia! Até a próxima!\n")
+                break # Quebra o laço principal, encerrando o programa
+            else:
+                print("Opção inválida! Digite 1, 2 ou 0.")
+        except ValueError:
+            print("Erro: Por favor, digite um número válido.")
+
+# O programa começa rodando esta função
+iniciar_sistema()
