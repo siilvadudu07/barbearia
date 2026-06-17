@@ -54,6 +54,10 @@ def servicosparacadastrar():
 def funcionarios():
     while True:
         nome = input("Digite o nome do funcionário: ")
+        cpf = input("Digite o CPF do funcionário: ")
+        if len(cpf) != 11:
+            print("CPF inválido. O CPF deve conter 11 dígitos. Tente novamente.")
+            continue
         servicosparacadastrar()
         especialidade = int(input("Digite o número da especialidade do funcionário: "))
         if especialidade == 1:
@@ -79,9 +83,9 @@ def funcionarios():
         cursor = conexao.cursor()
 
         cursor.execute("""
-                    INSERT INTO funcionarios (nome, especialidade, comissao)
-                        VALUES (?, ?, ?)
-                    """, (nome, especialidade, comissao))
+                    INSERT INTO funcionarios (nome, cpf, especialidade, comissao)
+                        VALUES (?, ?, ?, ?)
+                    """, (nome, cpf, especialidade, comissao))
         conexao.commit()
         conexao.close()
 
@@ -153,7 +157,7 @@ def visualizar_funcionarios():
     if funcionarios:
         print("\nFuncionários Cadastrados:")
         for funcionario in funcionarios:
-            print(f"ID: {funcionario[0]}, Nome: {funcionario[1]}, Especialidade: {funcionario[2]}, Comissão: {funcionario[3]}%")
+            print(f"ID: {funcionario[0]}, Nome: {funcionario[1]}, CPF: {funcionario[2]}, Especialidade: {funcionario[3]}, Comissão: {funcionario[4]}%")
     else:
         print("Nenhum funcionário cadastrado.")
 

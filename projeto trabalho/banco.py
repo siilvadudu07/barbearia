@@ -9,6 +9,7 @@ def inicializar_banco():
         CREATE TABLE IF NOT EXISTS funcionarios (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             nome TEXT NOT NULL,
+            cpf TEXT NOT NULL,
             especialidade TEXT NOT NULL,
             comissao REAL NOT NULL
         )
