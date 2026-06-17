@@ -12,7 +12,6 @@ inicializar_banco()
 def pausa():
     input("\nPressione ENTER para continuar...")
 
-# --- MENUS DE CLIENTE ---
 def mostrar_menucliente():
     print("\n--- ÁREA DO CLIENTE ---")
     print("1. Mostrar Horários Disponíveis")
@@ -126,5 +125,5 @@ def iniciar_sistema():
         except ValueError:
             print("Erro: Por favor, digite um número válido.")
 
-# O programa começa rodando esta função
+# início do sistema
 iniciar_sistema()
