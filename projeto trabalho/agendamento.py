@@ -57,7 +57,7 @@ def agendar_servico():
         
     nome_servico_escolhido = servicos[servico_id]["nome"]
 
-    # 1. Conecta no banco para buscar os barbeiros com essa especialidade
+    # conecta no banco para buscar os barbeiros com essa especialidade
     conexao = sqlite3.connect('barbearia.db')
     cursor = conexao.cursor()
     cursor.execute("SELECT id, nome FROM funcionarios WHERE especialidade = ?", (nome_servico_escolhido,))
@@ -91,50 +91,77 @@ def agendar_servico():
 
     horario_escolhido = horarios[horario_id]
 
-    # verifica se o horário já foi reservado para ESSE barbeiro específico
-    for agendamento in agendamentos:
-        if agendamento["horario"] == horario_escolhido and agendamento["barbeiro_id"] == id_barbeiro_escolhido:
-            print("\n[Erro] Este barbeiro já tem um agendamento nesse horário! Escolha outro profissional ou horário.")
-            return
+#Verifica se o horário já está reservado para ESSE barbeiro
+    conexao = sqlite3.connect('barbearia.db')
+    cursor = conexao.cursor()
+    cursor.execute("SELECT id FROM agendamentos WHERE horario = ? AND barbeiro_id = ?", (horario_escolhido, id_barbeiro_escolhido))
+    conflito = cursor.fetchone()
 
-    #Se passou na validação, cria o agendamento único e salva na memória
-    novo_agendamento = {
-        "servico": nome_servico_escolhido,
-        "preco": servicos[servico_id]["preco"],
-        "horario": horario_escolhido,
-        "barbeiro_id": id_barbeiro_escolhido
-    }
+    if conflito:
+        print("\n[Erro] Este barbeiro já tem um agendamento nesse horário! Escolha outro profissional ou horário.")
+        conexao.close()
+        return
 
-    agendamentos.append(novo_agendamento)
-    print(f"\nAgendamento confirmado: {nome_servico_escolhido} com o barbeiro de ID {id_barbeiro_escolhido} às {horario_escolhido}!")
+    # salva diretamente no banco de dados
+    cursor.execute('''
+        INSERT INTO agendamentos (servico, preco, horario, barbeiro_id)
+        VALUES (?, ?, ?, ?)
+    ''', (nome_servico_escolhido, servicos[servico_id]["preco"], horario_escolhido, id_barbeiro_escolhido))
+    
+    conexao.commit()
+    conexao.close()
+    
+    print(f"\nAgendamento confirmado no Banco de Dados: {nome_servico_escolhido} às {horario_escolhido}!")
 
 #lista de agendamentos
 def listar_agendamentos():
     
     print("\n--- Lista de Agendamentos ---")
-    
-    if len(agendamentos) == 0:
+    conexao = sqlite3.connect('barbearia.db')
+    cursor = conexao.cursor()
+    cursor.execute('''
+        SELECT agendamentos.id, agendamentos.servico, agendamentos.horario, agendamentos.preco, funcionarios.nome 
+        FROM agendamentos 
+        INNER JOIN funcionarios ON agendamentos.barbeiro_id = funcionarios.id
+    ''')
+    todos_agendamentos = cursor.fetchall()
+    conexao.close()
+
+    if len(todos_agendamentos) == 0:
         print("\nNenhum agendamento encontrado.")
         return
 
-    for i, agendamento in enumerate(agendamentos):
-        print(f"{i+1}. {agendamento['servico']} às {agendamento['horario']} - R${agendamento['preco']:.2f}")    
+    for agendamento in todos_agendamentos:
+        id_agend, servico, hora, preco, nome_barbeiro = agendamento
+        print(f"{id_agend}. {servico} às {hora} - R${preco:.2f} (Barbeiro: {nome_barbeiro})")
+    return len(todos_agendamentos)
 
 
 #remover agendamento
 def remover_agendamento():
-    listar_agendamentos()
+    qtd = listar_agendamentos()
     
-    if len(agendamentos) == 0:
+    if qtd == 0:
         return
 
-    agendamento_id = int(input("\nDigite o número do agendamento que deseja remover: "))
+    id_remover = int(input("\nDigite o ID Ref do agendamento que deseja remover: "))
     
-    if agendamento_id < 1 or agendamento_id > len(agendamentos):
-        print("Agendamento inválido. Tente novamente.")
+    conexao = sqlite3.connect('barbearia.db')
+    cursor = conexao.cursor()
+    
+    # Verifica se esse ID existe antes de deletar
+    cursor.execute("SELECT servico FROM agendamentos WHERE id = ?", (id_remover,))
+    existe = cursor.fetchone()
+    
+    if not existe:
+        print("ID de agendamento não encontrado.")
+        conexao.close()
         return
 
-    agendamento_removido = agendamentos.pop(agendamento_id - 1)
-    print(f"\nAgendamento removido: {agendamento_removido['servico']} às {agendamento_removido['horario']} - R${agendamento_removido['preco']:.2f}")
+    cursor.execute("DELETE FROM agendamentos WHERE id = ?", (id_remover,))
+    conexao.commit()
+    conexao.close()
+    
+    print(f"\nAgendamento ID {id_remover} removido com sucesso do sistema!")
     
 

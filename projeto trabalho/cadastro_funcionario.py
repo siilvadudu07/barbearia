@@ -1,14 +1,15 @@
 #conexão com o sqlite3
 import sqlite3
+import datetime
 
-from agendamento import servicos, horarios, agendamentos
+from agendamento import servicos, horarios
 
 #função para conectar ao banco de dados
 def conectar_banco():
     conexao = sqlite3.connect('barbearia.db')
     cursor = conexao.cursor()
 
-    #cria a tabela de funcionários no banco de dados
+    #cria a tabela de funcionários
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS funcionarios (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -17,7 +18,8 @@ def conectar_banco():
             comissao REAL NOT NULL
         )
     ''')
-
+    
+    #cria a tabela de histórico de serviços realizados para comissão
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS servicos_realizados (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -30,9 +32,20 @@ def conectar_banco():
         )
     ''')
 
+    #tabela de agendamentos dos clientes
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS agendamentos (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            servico TEXT NOT NULL,
+            preco REAL NOT NULL,
+            horario TEXT NOT NULL,
+            barbeiro_id INTEGER NOT NULL,
+            FOREIGN KEY (barbeiro_id) REFERENCES funcionarios(id)
+        )
+    ''')
+    
     conexao.commit()
     conexao.close()
-
 
 
 
