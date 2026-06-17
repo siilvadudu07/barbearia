@@ -57,17 +57,31 @@ def agendar_servico():
         
     nome_servico_escolhido = servicos[servico_id]["nome"]
 
-    # ver se tem algum barbeiro que atende esse serviço, se não tiver, bloqueia o agendamento
+    # 1. Conecta no banco para buscar os barbeiros com essa especialidade
     conexao = sqlite3.connect('barbearia.db')
     cursor = conexao.cursor()
-    
-    # Procura se algum funcionário atende essa especialidade
     cursor.execute("SELECT id, nome FROM funcionarios WHERE especialidade = ?", (nome_servico_escolhido,))
     barbeiros_disponiveis = cursor.fetchall()
     conexao.close()
+
     if not barbeiros_disponiveis:
         print(f"\n[Erro] Desculpe, não temos nenhum barbeiro disponível especializado em: {nome_servico_escolhido}.")
         return
+
+    # mostra os barbeiros que podem fazer o serviço para o cliente escolher ANTES do horário
+    print("\nBarbeiros disponíveis para este serviço:")
+    for b in barbeiros_disponiveis:
+        print(f"ID: {b[0]} - Nome: {b[1]}")
+    
+    id_barbeiro_escolhido = int(input("Digite o ID do barbeiro que prefere: "))
+
+    # Valida se o ID digitado é de um barbeiro que realmente faz o serviço
+    ids_validos = [b[0] for b in barbeiros_disponiveis]
+    if id_barbeiro_escolhido not in ids_validos:
+        print("ID de barbeiro inválido para este serviço.")
+        return
+
+    # mostra e escolhe o horário
     mostrar_horarios()
     horario_id = int(input("\nDigite o número do horário que deseja agendar: "))
     
@@ -75,37 +89,25 @@ def agendar_servico():
         print("Horário inválido. Tente novamente.")
         return
 
-    # Verifica se o horário já foi reservado
+    horario_escolhido = horarios[horario_id]
+
+    # verifica se o horário já foi reservado para ESSE barbeiro específico
     for agendamento in agendamentos:
         if agendamento["horario"] == horario_escolhido and agendamento["barbeiro_id"] == id_barbeiro_escolhido:
             print("\n[Erro] Este barbeiro já tem um agendamento nesse horário! Escolha outro profissional ou horário.")
             return
-    horario_escolhido = horarios[horario_id]
-    # Se passou na validação, salva o agendamento na memória
+
+    #Se passou na validação, cria o agendamento único e salva na memória
     novo_agendamento = {
         "servico": nome_servico_escolhido,
         "preco": servicos[servico_id]["preco"],
         "horario": horario_escolhido,
         "barbeiro_id": id_barbeiro_escolhido
     }
-    agendamentos.append(novo_agendamento)
-    print(f"\nAgendamento feito com sucesso para o horário das {horario_escolhido}!")
-
-    # Mostra os barbeiros que podem fazer o serviço para o cliente escolher um
-    print("\nBarbeiros disponíveis para este serviço:")
-    for b in barbeiros_disponiveis:
-        print(f"ID: {b[0]} - Nome: {b[1]}")
-    id_barbeiro_escolhido = int(input("Digite o ID do barbeiro que prefere: "))
-
-    novo_agendamento = {
-        "servico": nome_servico_escolhido,
-        "preco": servicos[servico_id]["preco"],
-        "horario": horarios[horario_id],
-        "barbeiro_id": id_barbeiro_escolhido
-    }
 
     agendamentos.append(novo_agendamento)
-    print(f"\nAgendamento confirmado: {nome_servico_escolhido} às {horarios[horario_id]}.")
+    print(f"\nAgendamento confirmado: {nome_servico_escolhido} com o barbeiro de ID {id_barbeiro_escolhido} às {horario_escolhido}!")
+
 #lista de agendamentos
 def listar_agendamentos():
     
@@ -135,3 +137,4 @@ def remover_agendamento():
     agendamento_removido = agendamentos.pop(agendamento_id - 1)
     print(f"\nAgendamento removido: {agendamento_removido['servico']} às {agendamento_removido['horario']} - R${agendamento_removido['preco']:.2f}")
     
+

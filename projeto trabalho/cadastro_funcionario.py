@@ -17,8 +17,23 @@ def conectar_banco():
             comissao REAL NOT NULL
         )
     ''')
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS servicos_realizados (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            funcionario_id INTEGER,
+            servico_nome TEXT,
+            valor_servico REAL,
+            valor_comissao REAL,
+            data_registro TEXT,
+            FOREIGN KEY (funcionario_id) REFERENCES funcionarios(id)
+        )
+    ''')
+
     conexao.commit()
     conexao.close()
+
+
 
 
 profissionais = {}
@@ -103,47 +118,60 @@ def funcionarios():
 
         print("Funcionário cadastrado com sucesso!")
 
-        continuar = input("Deseja cadastrar outro funcionário? (sim/não): ").lower
+        continuar = input("Deseja cadastrar outro funcionário? (sim/não): ").lower()
         if continuar != 'sim':
             break
+        elif continuar == 'sim':
+            return funcionarios()
 
 #criar banco de dados para armazenar as comissões semanais dos funcionários
-def banco_comissoes():
-    conexao = sqlite3.connect('comissoes.db')
-    cursor = conexao.cursor()
-
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS comissoes (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            nome_funcionario TEXT NOT NULL,
-            valor_comissao REAL NOT NULL,
-            data TEXT NOT NULL
-        )
-    ''')
-
-    for agendamento in agendamentos:
-        nome_funcionario = agendamento['funcionario']
-        id_servico = agendamento['servico']
-        valor_servico = servicos[id_servico]['preco']
-        comissao_funcionario = 0.0
-
-        conexao_comissao = sqlite3.connect('barbearia.db')
-        cursor_comissao = conexao_comissao.cursor()
-        cursor_comissao.execute("SELECT comissao FROM funcionarios WHERE nome = ?", (nome_funcionario,))
-        resultado = cursor_comissao.fetchone()
-        if resultado:
-            comissao_funcionario = resultado[0]
-        conexao_comissao.close()
-
-        valor_comissao = valor_servico * (comissao_funcionario / 100)
-        data_agendamento = agendamento['data']
-
-        cursor.execute("""
-            INSERT INTO comissoes (nome_funcionario, valor_comissao, data)
-            VALUES (?, ?, ?)
-        """, (nome_funcionario, valor_comissao, data_agendamento))
-    conexao.commit()
-    conexao.close()
+def exibir_comissoes_banco():
+    visualizar_funcionarios()
+    try:
+        id_funcionario = int(input("\nDigite o ID do barbeiro para ver o relatório de comissões: "))
+        
+        conexao = sqlite3.connect('barbearia.db')
+        cursor = conexao.cursor()
+        
+        # Busca o nome do funcionário
+        cursor.execute("SELECT nome FROM funcionarios WHERE id = ?", (id_funcionario,))
+        funcionario = cursor.fetchone()
+        
+        if funcionario:
+            nome_barbeiro = funcionario[0]
+            
+            # Busca todos os serviços que esse barbeiro realizou
+            cursor.execute('''
+                SELECT servico_nome, valor_servico, valor_comissao, data_registro 
+                FROM servicos_realizados 
+                WHERE funcionario_id = ?
+            ''', (id_funcionario,))
+            
+            servicos_feitos = cursor.fetchall()
+            
+            print(f"\n********************************************")
+            print(f"   EXTRATO DE COMISSÕES: {nome_barbeiro.upper()}   ")
+            print(f"********************************************")
+            
+            if not servicos_feitos:
+                print("Nenhum serviço realizado/salvo para este funcionário ainda.")
+            else:
+                total_comissao = 0.0
+                for item in servicos_feitos:
+                    servico, valor, comissao, data = item
+                    total_comissao += comissao
+                    print(f"Data: {data} | {servico} | Valor: R${valor:.2f} -> Comissão: R${comissao:.2f}")
+                
+                print(f"********************************************")
+                print(f" TOTAL A RECEBER: R${total_comissao:.2f}")
+                print(f"********************************************")
+        else:
+            print("Funcionário não encontrado.")
+            
+        conexao.close()
+        
+    except ValueError:
+        print("ID inválido. Por favor, digite um número inteiro.")
 
 #visualizar funcionários
 def visualizar_funcionarios():
@@ -181,28 +209,37 @@ def excluir_funcionario():
 def calcular_comissao():
     visualizar_funcionarios()
     try: 
-        id_funcionario = int(input("Digite o ID do funcionário que realizou o serviço: "))
+        id_funcionario = int(input("\nDigite o ID do funcionário que realizou o serviço: "))
         conexao = sqlite3.connect('barbearia.db')
         cursor = conexao.cursor()
         cursor.execute("SELECT nome, especialidade, comissao FROM funcionarios WHERE id = ?", (id_funcionario,))
         funcionario = cursor.fetchone()
         conexao.close()
+        
         if funcionario:
             nome = funcionario[0]
             especialidade = funcionario[1]
             comissao_funcionario = funcionario[2]
-            print(f"Funcionário: {nome}, Especialidade: {especialidade}, Comissão: {comissao_funcionario}%")
-            print("Serviços disponíveis:")
-            for id, servico in servicos.items():
-                print(f"{id}. {servico['nome']} - R${servico['preco']:.2f}")
-            id_servico = int(input("Digite o ID do serviço realizado: "))
+            print(f"\nFuncionário: {nome} | Especialidade: {especialidade} | Comissão: {comissao_funcionario}%")
+            
+            # Mostra os serviços
+            print("\nServiços disponíveis:")
+            for id_s, servico in servicos.items():
+                print(f"{id_s}. {servico['nome']} - R${servico['preco']:.2f}")
+                
+            id_servico = int(input("\nDigite o ID do serviço realizado: "))
+            
             if id_servico in servicos:
                 valor_servico = servicos[id_servico]['preco']
                 calculo_comissao = valor_servico * (comissao_funcionario / 100)
-                print(f"A comissão do funcionário é: R${calculo_comissao:.2f}")
+                print(f"\nA comissão do funcionário é: R${calculo_comissao:.2f}")
+                gravar = input("\nDeseja registrar e salvar essa comissão no banco de dados? (sim/não): ").lower()
+                if gravar == 'sim' or gravar == 's':
+                    registrar_servico_banco(id_funcionario, id_servico)
             else:
                 print("Serviço não encontrado.")
         else:
             print("Funcionário não encontrado.")
+            
     except ValueError:
         print("ID inválido. Por favor, digite um número inteiro.")

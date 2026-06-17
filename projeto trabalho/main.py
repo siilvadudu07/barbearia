@@ -1,7 +1,7 @@
 """
 main - integração
 """
-from cadastro_funcionario import banco_comissoes, calcular_comissao, conectar_banco, funcionarios, visualizar_funcionarios, excluir_funcionario, banco_comissoes, registrar_servico_banco
+from cadastro_funcionario import exibir_comissoes_banco, calcular_comissao, conectar_banco, funcionarios, visualizar_funcionarios, excluir_funcionario, registrar_servico_banco
 from agendamento import mostrar_servicos, mostrar_horarios, agendar_servico, listar_agendamentos, remover_agendamento
 
 conectar_banco()
@@ -29,6 +29,7 @@ def mostrar_menucliente():
     print("2. Mostrar Serviços Disponíveis")
     print("3. Listar Agendamentos")
     print("4. Agendar um Serviço")
+    print("5. Remover Agendamento")
     print("0. Retornar ao Menu Principal")
     
 def menucliente():
@@ -47,11 +48,14 @@ def menucliente():
     elif opcao == 4:
         agendar_servico()
         retorno()
+    elif opcao == 5:
+        remover_agendamento()
+        retorno()
     elif opcao == 0:
         print("Obrigado por usar o sistema da barbearia! Até a próxima!")
         retorno()
     else:
-        print("Opção inválida! Digite um número de 0 a 4")
+        print("Opção inválida! Digite um número de 0 a 5'")
 
 def mostrar_menubarbeiro():
     print("Menu Principal")
@@ -67,7 +71,7 @@ def mostrar_menubarbeiro():
     print("0. Retornar ao Menu Principal")
 
 def mostrar_comissao():
-    banco_comissoes()
+    exibir_comissoes_banco()
 
 def menubarbeiro():
     while True:
@@ -99,9 +103,6 @@ def menubarbeiro():
                 return menubarbeiro()
         elif opcao == 8:
             calcular_comissao()
-            id_func = int(input("Digite o ID do funcionário para calcular a comissão: "))
-            id_servico = int(input("Digite o ID do serviço realizado: "))
-            registrar_servico_banco(id_func, id_servico)
             retorno()
         elif opcao == 9:
             mostrar_comissao()
@@ -111,7 +112,7 @@ def menubarbeiro():
             retorno()
             break  # Encerra o looping e fecha o programa
         else:
-            print("Opção inválida! Digite um número de 0 a 7")
+            print("Opção inválida! Digite um número de 0 a 9.")
 
 #começo
 conectar_banco()
