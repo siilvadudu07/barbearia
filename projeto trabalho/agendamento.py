@@ -4,6 +4,7 @@ agendamentos
 agendamentos = []
 import sqlite3
 
+#-MÓDULO 3-
 #serviços disponíveis
 servicos = {
     1: {"nome": "Corte de Cabelo", "preco": 30.0},
@@ -17,6 +18,8 @@ servicos = {
 
 #ajeitar o banco de dados para incluir os serviços e os horários disponíveis, para que o barbeiro possa escolher quais serviços ele oferece e quais horários ele tem disponível para agendamento. Assim, quando o cliente for agendar um serviço, ele poderá escolher entre os serviços e horários disponíveis do barbeiro específico. 
 
+
+#-MÓDULO 2-
 #horários disponíveis
 horarios = {
     1: "09:00",
